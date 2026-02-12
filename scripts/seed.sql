@@ -6,8 +6,9 @@ INSERT INTO documents (id, name, contents, tenant) VALUES (12, 'Confidential Doc
 INSERT INTO documents (id, name, contents, tenant) VALUES (13, 'Public Document', 'Hello World!', null);
 
 INSERT INTO notes (id, contents, document) VALUES (101, 'You should not!', 11);
-INSERT INTO notes (id, contents, document) VALUES (102, 'Delete it!', 12);
-INSERT INTO notes (id, contents, document) VALUES (103, 'Hello!', 13);
+INSERT INTO notes (id, contents, document) VALUES (102, 'Blimey!', 11);
+INSERT INTO notes (id, contents, document) VALUES (103, 'Delete it!', 12);
+INSERT INTO notes (id, contents, document) VALUES (104, 'Hello!', 13);
 
 INSERT INTO tags (id, name, tenant) VALUES (1001, 'Sales', 1);
 INSERT INTO tags (id, name, tenant) VALUES (1002, 'IT', 1);

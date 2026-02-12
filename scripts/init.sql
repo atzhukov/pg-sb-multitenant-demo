@@ -101,4 +101,26 @@ CREATE POLICY tags_2_documents_rls_app ON tags_2_documents TO app USING (
 	tags_2_documents.document IN (SELECT documents.id FROM documents)
 );
 
+
+
+-- Views are executed with the priveleges of the owner, regardless of the priveleges of the user
+-- accessing the view. Thus, if the superuser or a user with BYPASSRLS enabled is the owner,
+-- any user accessing the view will also bypass RLS.
+-- To avoid this, the 'security_invoker' flag is required, which will use the current user's permissions:
+CREATE VIEW documents_with_tags
+WITH (security_invoker)
+AS SELECT
+	d.id,
+	d.name,
+	d.contents,
+	string_agg(t.name, ', ') AS tags,
+	(SELECT count(1) FROM notes WHERE notes.document = d.id) AS notes_amount,
+	(SELECT count(1) FROM notes) AS notes_total,
+	d.tenant
+FROM documents d
+	JOIN tags_2_documents t2d ON d.id = t2d.document
+	JOIN tags t ON t2d.tag = t.id
+GROUP BY d.id;
+GRANT SELECT ON documents_with_tags TO app;
+
 -- TODO: restrictive/permissive policies
