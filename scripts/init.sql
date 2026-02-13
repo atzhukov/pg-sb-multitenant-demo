@@ -136,6 +136,7 @@ FROM documents d
 	JOIN tags t ON t2d.tag = t.id
 GROUP BY d.id;
 GRANT SELECT ON documents_with_tags TO app;
+-- It is possible to audit views for this flag (see scripts/security-invoker.sql).
 
 
 
