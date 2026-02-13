@@ -19,7 +19,7 @@ ALTER TABLE tenants FORCE ROW LEVEL SECURITY;
 -- USING applies to existing rows (reading), while WITH CHECK applies to new rows (writing).
 -- Here, WITH CHECK is implicitly the same as USING.
 CREATE POLICY tenants_rls_app ON tenants AS RESTRICTIVE TO app USING (
-	id = current_setting('app.tenant')::BIGINT
+	id = ANY(current_setting('app.tenant')::BIGINT[])
 );
 -- Policies can be either permissive (default) or restrictive.
 -- Access to a row is granted if ANY of the permissive policies pass AND ALL of the restrictive policies pass.
@@ -45,7 +45,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON documents TO app;
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE documents FORCE ROW LEVEL SECURITY;
 CREATE POLICY documents_rls_app ON documents AS RESTRICTIVE TO app USING (
-	tenant IS NULL OR tenant = current_setting('app.tenant')::BIGINT
+	tenant IS NULL OR tenant = ANY(current_setting('app.tenant')::BIGINT[])
 );
 CREATE POLICY documents_rls_perm_app ON documents TO app USING (true);
 
@@ -63,7 +63,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON notes TO app;
 ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notes FORCE ROW LEVEL SECURITY;
 CREATE POLICY notes_rls_app ON notes AS RESTRICTIVE TO app USING (
-	EXISTS (SELECT 1 FROM documents WHERE documents.id = notes.document)
+	notes.document IN (SELECT documents.id FROM documents)
 );
 CREATE POLICY notes_rls_perm_app ON notes TO app USING (true);
 -- However, for performance reasons, it might be best to avoid subqueries and store tenant
@@ -81,7 +81,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON tags TO app;
 ALTER TABLE tags ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tags FORCE ROW LEVEL SECURITY;
 CREATE POLICY tags_rls_app ON tags AS RESTRICTIVE TO app USING (
-	tenant is NULL OR tenant = current_setting('app.tenant')::BIGINT
+	tenant is NULL OR tenant = ANY(current_setting('app.tenant')::BIGINT[])
 );
 CREATE POLICY tags_rls_perm_app ON tags TO app USING (true);
 -- We can omit 'tenant' from the junction table, as joining to either 'tags' or 'documents'
@@ -95,8 +95,8 @@ CREATE TABLE tags_2_documents (
 GRANT SELECT, INSERT, UPDATE, DELETE ON tags_2_documents TO app;
 ALTER TABLE tags_2_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tags_2_documents FORCE ROW LEVEL SECURITY;
--- Adding a 'tenant' column and setting up "USING (tenant IS NULL OR tenant = current_setting(\'app.tenant')::BIGINT)"
--- will not be enough here, as a connection for one tenant could create entries for another.
+-- Adding a 'tenant' column and setting up "USING (tenant IS NULL OR tenant = ANY(current_setting(\'app.tenant')::BIGINT[]))"
+-- will not be enough here, as a connection for one tenant could create entries linking tags and documents of another tenant.
 -- The following will join the tables to verify:
 --
 -- 			CREATE POLICY tags_2_documents_rls_app ON tags_2_documents TO app USING (true) WITH CHECK (
