@@ -10,3 +10,13 @@ services:
       - ./scripts/seed.sql:/docker-entrypoint-initdb.d/1-seed.sql
     env_file:
       - .env
+  server:
+    build:
+      context: ./sb-multitenant-demo
+    depends_on:
+      - db
+    ports:
+      - ${SB_PORT}:8080
+    env_file:
+      - .env
+    restart: 'unless-stopped'
