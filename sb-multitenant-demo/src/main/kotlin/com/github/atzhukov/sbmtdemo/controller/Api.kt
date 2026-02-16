@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/api")
 interface Api {
 
-    @GetMapping("/documents")
-    fun getDocuments(): List<Document>
+  @GetMapping("/documents")
+  fun getDocuments(): List<Document>
 
-    @GetMapping("/users")
-    fun findUserByLogin(login: String): User?
+  @GetMapping("/users")
+  fun findUserByLogin(login: String): User?
 
 }

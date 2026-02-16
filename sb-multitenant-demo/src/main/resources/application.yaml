@@ -19,9 +19,8 @@ datasource:
 
 logging:
   level:
-    org:
-      hibernate:
-        # log SQL statements (DEBUG):
-        SQL: INFO
-        # log binded parameters (TRACE):
-        orm.jdbc.bind: INFO
+    org.hibernate:
+      # log SQL statements (DEBUG):
+      SQL: INFO
+      # log bound parameters (TRACE):
+      orm.jdbc.bind: INFO

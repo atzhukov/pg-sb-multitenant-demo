@@ -12,12 +12,12 @@ import java.time.OffsetDateTime
 
 @Service
 class AuthServiceImpl(
-    @Qualifier("authJdbcTemplate")
-    private val jdbcTemplate: JdbcTemplate,
+  @Qualifier("authJdbcTemplate")
+  private val jdbcTemplate: JdbcTemplate,
 ): AuthService {
 
-    override fun getByLogin(login: String): User? {
-        val sql = """
+  override fun getByLogin(login: String): User? {
+	val sql = """
             SELECT
                 u.*,
                 t.id AS tenant_id,
@@ -27,33 +27,33 @@ class AuthServiceImpl(
                 JOIN tenants t ON t.id = utt.tenant
             WHERE u.login = ?
             """.trimIndent()
-        return jdbcTemplate.query(sql, ResultSetExtractor(::extractUserWithTenants), login)
-    }
+	return jdbcTemplate.query(sql, ResultSetExtractor(::extractUserWithTenants), login)
+  }
 
-    private fun extractUserWithTenants(rs: ResultSet): User? {
-        var user: User? = null
-        val tenants = mutableSetOf<Tenant>()
+  private fun extractUserWithTenants(rs: ResultSet): User? {
+	var user: User? = null
+	val tenants = mutableSetOf<Tenant>()
 
-        while (rs.next()) {
-            if (user == null) {
-                user = User(
-                    id = rs.getLong("id"),
-                    login = rs.getString("login"),
-                    password = rs.getString("password"),
-                    name = rs.getString("name"),
-                    lastLogin = rs.getObject("last_login", OffsetDateTime::class.java),
-                    tenants = tenants
-                )
-            }
-            tenants.add(
-                Tenant(
-                    id = rs.getLong("tenant_id"),
-                    name = rs.getString("tenant_name")
-                )
-            )
-        }
+	while (rs.next()) {
+	  if (user == null) {
+		user = User(
+		  id = rs.getLong("id"),
+		  login = rs.getString("login"),
+		  password = rs.getString("password"),
+		  name = rs.getString("name"),
+		  lastLogin = rs.getObject("last_login", OffsetDateTime::class.java),
+		  tenants = tenants
+		)
+	  }
+	  tenants.add(
+		Tenant(
+		  id = rs.getLong("tenant_id"),
+		  name = rs.getString("tenant_name")
+		)
+	  )
+	}
 
-        return user
-    }
+	return user
+  }
 
 }

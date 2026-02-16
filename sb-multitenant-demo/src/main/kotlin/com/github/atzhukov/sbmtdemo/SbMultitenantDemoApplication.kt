@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class SbMultitenantDemoApplication
 
 fun main(args: Array<String>) {
-	runApplication<SbMultitenantDemoApplication>(*args)
+  runApplication<SbMultitenantDemoApplication>(*args)
 }

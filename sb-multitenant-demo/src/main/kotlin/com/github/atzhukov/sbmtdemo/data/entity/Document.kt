@@ -14,18 +14,18 @@ import jakarta.persistence.Table
 @Table(name = "documents")
 class Document(
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?,
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  val id: Long?,
 
-    @Column(nullable = false)
-    val name: String,
+  @Column(nullable = false)
+  val name: String,
 
-    @Column(nullable = false)
-    val contents: String,
+  @Column(nullable = false)
+  val contents: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant")
-    val tenant: Tenant?,
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "tenant")
+  val tenant: Tenant?
 
 )

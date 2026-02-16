@@ -14,12 +14,14 @@ import kotlin.jvm.optionals.getOrNull
 
 @RestController
 class Controller(
-    private val documentService: DocumentService,
-    private val authService: AuthService,
+  private val documentService: DocumentService,
+  private val authService: AuthService,
 ): Api {
 
-    override fun getDocuments(): List<Document> = documentService.getAllDocuments()
+  override fun getDocuments(): List<Document>
+    = documentService.getAllDocuments()
 
-    override fun findUserByLogin(login: String): User? = authService.getByLogin(login)
+  override fun findUserByLogin(login: String): User?
+    = authService.getByLogin(login)
 
 }

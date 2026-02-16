@@ -12,11 +12,11 @@ import jakarta.persistence.Table
 @Table(name = "tenants")
 class Tenant(
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?,
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  val id: Long?,
 
-    @Column(nullable = false)
-    val name: String
+  @Column(nullable = false)
+  val name: String
 
 )

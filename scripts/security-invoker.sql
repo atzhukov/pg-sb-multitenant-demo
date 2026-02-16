@@ -11,6 +11,5 @@ WHERE
 	pgv.schemaname = 'public'
 	AND (
 		pgc.reloptions IS NULL
-		OR NOT ('security_invoker=true' = ANY(pgc.reloptions)
-	)
-);
+		OR NOT ('security_invoker=true' = ANY(pgc.reloptions))
+    );
