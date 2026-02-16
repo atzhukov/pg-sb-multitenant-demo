@@ -11,6 +11,11 @@ datasource:
     username: ${APP_POSTGRES_USERNAME}
     password: ${APP_POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+  auth:
+    jdbc-url: ${DB_URL}
+    username: ${APP_AUTH_POSTGRES_USERNAME}
+    password: ${APP_AUTH_POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
 logging:
   level:

@@ -184,3 +184,4 @@ CREATE ROLE auth;
 -- 			ALTER USER <auth_username> BYPASSRLS;
 GRANT SELECT ON users TO auth;
 GRANT SELECT ON users_to_tenants TO auth;
+GRANT SELECT ON tenants TO auth;
