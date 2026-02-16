@@ -18,18 +18,18 @@ import jakarta.persistence.Table
 class Document(
 
 	@Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  var id: Long?,
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	var id: Long?,
 
 	@Column(nullable = false)
-  var name: String?,
+	var name: String?,
 
 	@Column(nullable = false)
-  var contents: String?,
+	var contents: String?,
 
 	@ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "tenant")
-  var tenant: Tenant?,
+	@JoinColumn(name = "tenant")
+	var tenant: Tenant?,
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "document")
 	var notes: List<Note>?,

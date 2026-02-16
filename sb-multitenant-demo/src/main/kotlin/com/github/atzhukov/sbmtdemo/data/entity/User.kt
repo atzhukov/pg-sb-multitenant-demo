@@ -16,28 +16,28 @@ import java.time.OffsetDateTime
 @Table(name = "users")
 class User(
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  var id: Long?,
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	var id: Long?,
 
-  @Column(nullable = false)
-  var login: String?,
+	@Column(nullable = false)
+	var login: String?,
 
-  @Column(nullable = false)
-  var password: String?,
+	@Column(nullable = false)
+	var password: String?,
 
-  @Column(nullable = false)
-  var name: String?,
+	@Column(nullable = false)
+	var name: String?,
 
-  @Column(nullable = false)
-  var lastLogin: OffsetDateTime?,
+	@Column(nullable = false)
+	var lastLogin: OffsetDateTime?,
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
 		name = "users_to_tenants",
 		joinColumns = [JoinColumn(name = "user")],
 		inverseJoinColumns = [JoinColumn(name = "tenant")]
-  )
-  var tenants: Set<Tenant>?
+	)
+	var tenants: Set<Tenant>?
 
 )

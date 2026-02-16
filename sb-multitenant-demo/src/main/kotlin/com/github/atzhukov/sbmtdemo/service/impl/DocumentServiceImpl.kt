@@ -7,9 +7,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class DocumentServiceImpl(
-  private val documentRepository: DocumentRepository
+	private val documentRepository: DocumentRepository
 ) : DocumentService {
-  override fun getAllDocuments(): List<Document> {
-	return documentRepository.findAll()
-  }
+	override fun getAllDocuments(): List<Document>
+			= documentRepository.findAll()
 }

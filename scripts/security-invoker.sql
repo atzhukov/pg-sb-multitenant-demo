@@ -12,4 +12,4 @@ WHERE
 	AND (
 		pgc.reloptions IS NULL
 		OR NOT ('security_invoker=true' = ANY(pgc.reloptions))
-    );
+	);
