@@ -21,23 +21,23 @@ class User(
   var id: Long?,
 
   @Column(nullable = false)
-  var login: String,
+  var login: String?,
 
   @Column(nullable = false)
-  var password: String,
+  var password: String?,
 
   @Column(nullable = false)
-  var name: String,
+  var name: String?,
 
   @Column(nullable = false)
   var lastLogin: OffsetDateTime?,
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-	name = "users_to_tenants",
-	joinColumns = [JoinColumn(name = "user")],
-	inverseJoinColumns = [JoinColumn(name = "tenant")]
+		name = "users_to_tenants",
+		joinColumns = [JoinColumn(name = "user")],
+		inverseJoinColumns = [JoinColumn(name = "tenant")]
   )
-  var tenants: Set<Tenant>
+  var tenants: Set<Tenant>?
 
 )

@@ -1,6 +1,5 @@
 package com.github.atzhukov.sbmtdemo.data.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -14,9 +13,9 @@ class Tenant(
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id: Long?,
+  var id: Long?,
 
   @Column(nullable = false)
-  val name: String
+  var name: String?
 
 )
