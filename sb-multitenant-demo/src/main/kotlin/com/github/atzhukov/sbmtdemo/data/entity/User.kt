@@ -18,19 +18,19 @@ class User(
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	var id: Long?,
+	var id: Long? = null,
 
 	@Column(nullable = false)
-	var login: String?,
+	var login: String? = null,
 
 	@Column(nullable = false)
-	var password: String?,
+	var password: String? = null,
 
 	@Column(nullable = false)
-	var name: String?,
+	var name: String? = null,
 
 	@Column(nullable = false)
-	var lastLogin: OffsetDateTime?,
+	var lastLogin: OffsetDateTime? = null,
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
@@ -38,6 +38,6 @@ class User(
 		joinColumns = [JoinColumn(name = "user")],
 		inverseJoinColumns = [JoinColumn(name = "tenant")]
 	)
-	var tenants: Set<Tenant>?
+	var tenants: Set<Tenant>? = null
 
 )
