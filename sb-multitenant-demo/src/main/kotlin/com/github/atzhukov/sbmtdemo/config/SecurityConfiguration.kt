@@ -25,6 +25,7 @@ class SecurityConfiguration {
 			.csrf { it.disable() }
 			.authorizeHttpRequests { auth -> auth
 				.requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/signup").permitAll()
 				.anyRequest().authenticated()
 			}
 		return http.build()

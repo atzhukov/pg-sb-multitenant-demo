@@ -29,7 +29,6 @@ class User(
 	@Column(nullable = false)
 	var name: String? = null,
 
-	@Column(nullable = false)
 	var lastLogin: OffsetDateTime? = null,
 
 	@ManyToMany(fetch = FetchType.EAGER)

@@ -182,6 +182,6 @@ CREATE ROLE auth;
 -- 			ALTER ROLE auth BYPASSRLS;
 -- For the auth user to be able to see any entries, the following is required:
 -- 			ALTER USER <auth_username> BYPASSRLS;
-GRANT SELECT ON users TO auth;
-GRANT SELECT ON users_to_tenants TO auth;
+GRANT SELECT, INSERT, UPDATE ON users TO auth;
+GRANT SELECT, INSERT, UPDATE ON users_to_tenants TO auth;
 GRANT SELECT ON tenants TO auth;

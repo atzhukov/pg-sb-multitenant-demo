@@ -9,7 +9,7 @@ class UserWithDetails(
 ): UserDetails {
 	override fun getUsername(): String = user.login!!
 	override fun getPassword(): String? = user.password
-	override fun getAuthorities(): Collection<GrantedAuthority> = setOf()
+	override fun getAuthorities(): Collection<GrantedAuthority> = emptySet()
 }
 
 internal fun User.asUserDetails(): UserDetails = UserWithDetails(this)

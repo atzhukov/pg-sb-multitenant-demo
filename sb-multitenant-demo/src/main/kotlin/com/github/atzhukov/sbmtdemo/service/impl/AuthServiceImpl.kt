@@ -6,7 +6,10 @@ import com.github.atzhukov.sbmtdemo.service.AuthService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.jdbc.core.queryForObject
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.sql.ResultSet
 import java.time.OffsetDateTime
 
@@ -14,7 +17,13 @@ import java.time.OffsetDateTime
 class AuthServiceImpl(
 	@Qualifier("authJdbcTemplate")
 	private val jdbcTemplate: JdbcTemplate,
+	private val passwordEncoder: PasswordEncoder,
 ): AuthService {
+
+	override fun existsByLogin(login: String): Boolean {
+		val sql = "SELECT EXISTS (SELECT 1 FROM users WHERE login = ?)"
+		return jdbcTemplate.queryForObject(sql, login) ?: false
+	}
 
 	override fun getByLogin(login: String): User? {
 		val sql = """
@@ -23,11 +32,20 @@ class AuthServiceImpl(
 				t.id AS tenant_id,
 				t.name AS tenant_name
 			FROM users u
-				JOIN users_to_tenants utt ON utt.user = u.id
-				JOIN tenants t ON t.id = utt.tenant
+				LEFT JOIN users_to_tenants utt ON utt.user = u.id
+				LEFT JOIN tenants t ON t.id = utt.tenant
 			WHERE u.login = ?
 			""".trimIndent()
 		return jdbcTemplate.query(sql, ResultSetExtractor(::extractUserWithTenants), login)
+	}
+
+	@Transactional
+	override fun create(user: User, password: String) {
+		if (existsByLogin(user.login!!)) {
+			throw IllegalArgumentException("User with this login already exists")
+		}
+		val sql = "INSERT INTO users (login, password, name) VALUES (?, ?, ?)"
+		jdbcTemplate.update(sql, user.login!!, passwordEncoder.encode(password), user.login!! + "@@@")
 	}
 
 	private fun extractUserWithTenants(rs: ResultSet): User? {
@@ -44,6 +62,9 @@ class AuthServiceImpl(
 					lastLogin = rs.getObject("last_login", OffsetDateTime::class.java),
 					tenants = tenants
 				)
+			}
+			if (rs.getLong("tenant_id") == 0L) {
+				continue
 			}
 			tenants.add(
 				Tenant(
