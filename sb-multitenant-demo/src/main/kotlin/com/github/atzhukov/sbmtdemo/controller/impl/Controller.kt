@@ -1,6 +1,6 @@
 package com.github.atzhukov.sbmtdemo.controller.impl
 
-import com.github.atzhukov.sbmtdemo.config.auth.Jwt
+import com.github.atzhukov.sbmtdemo.config.auth.JwtUtils
 import com.github.atzhukov.sbmtdemo.config.auth.UserWithDetails
 import com.github.atzhukov.sbmtdemo.controller.Api
 import com.github.atzhukov.sbmtdemo.data.entity.Document
@@ -18,26 +18,32 @@ class Controller(
 	private val documentService: DocumentService,
 	private val authService: AuthService,
 	private val authenticationManager: AuthenticationManager,
+	private val jwtUtils: JwtUtils
 ): Api {
 
 	override fun getDocuments(): List<Document>
 			= documentService.getAllDocuments()
 
-	override fun signUp(credentials: Api.Credentials): String {
+	override fun signUp(credentials: Api.Credentials) {
 		if (authService.existsByLogin(credentials.login)) {
 			throw ResponseStatusException(HttpStatus.CONFLICT, "Username already exists")
 		}
-
 		val user = User(
 			login = credentials.login,
-			name = credentials.login + "@@@" // FIXME
+			name = credentials.login + " (Name)"
 		)
 		authService.create(user, credentials.password)
+	}
 
-		val auth = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(credentials.login, credentials.password))
+	override fun signIn(credentials: Api.Credentials): String {
+		val credentialsToken = UsernamePasswordAuthenticationToken(
+			credentials.login,
+			credentials.password
+		)
+
+		val auth = authenticationManager.authenticate(credentialsToken)
 		val principal = auth.principal as UserWithDetails
-
-		return Jwt.of(principal.username)
+		return jwtUtils.createToken(principal)
 	}
 
 }

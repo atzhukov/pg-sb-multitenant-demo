@@ -1,7 +1,5 @@
 package com.github.atzhukov.sbmtdemo.config
 
-import com.github.atzhukov.sbmtdemo.config.auth.UserWithDetailsService
-import com.github.atzhukov.sbmtdemo.service.AuthService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -10,6 +8,7 @@ import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -23,10 +22,12 @@ class SecurityConfiguration {
 	fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
 		http
 			.csrf { it.disable() }
-			.authorizeHttpRequests { auth -> auth
-				.requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/signup").permitAll()
-				.anyRequest().authenticated()
+			.sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+			.authorizeHttpRequests { auth ->
+				auth
+					.requestMatchers(HttpMethod.POST, "/api/signup").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/signin").permitAll()
+					.anyRequest().authenticated()
 			}
 		return http.build()
 	}
