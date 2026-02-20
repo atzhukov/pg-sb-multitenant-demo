@@ -19,9 +19,9 @@ INSERT INTO tags (id, name, tenant) VALUES (1006, 'TLP Green', 2);
 INSERT INTO tags (id, name, tenant) VALUES (1007, 'TLP Clear', 2);
 INSERT INTO tags (id, name, tenant) VALUES (1008, 'Draft', null);
 
-INSERT INTO tags_2_documents (id, tag, document) VALUES (10001, 1001, 11);
-INSERT INTO tags_2_documents (id, tag, document) VALUES (10002, 1002, 11);
-INSERT INTO tags_2_documents (id, tag, document) VALUES (10003, 1008, 11);
-INSERT INTO tags_2_documents (id, tag, document) VALUES (10004, 1004, 12);
-INSERT INTO tags_2_documents (id, tag, document) VALUES (10005, 1004, 13);
-INSERT INTO tags_2_documents (id, tag, document) VALUES (10006, 1008, 13);
+INSERT INTO tags_to_documents (id, tag, document) VALUES (10001, 1001, 11);
+INSERT INTO tags_to_documents (id, tag, document) VALUES (10002, 1002, 11);
+INSERT INTO tags_to_documents (id, tag, document) VALUES (10003, 1008, 11);
+INSERT INTO tags_to_documents (id, tag, document) VALUES (10004, 1004, 12);
+INSERT INTO tags_to_documents (id, tag, document) VALUES (10005, 1004, 13);
+INSERT INTO tags_to_documents (id, tag, document) VALUES (10006, 1008, 13);

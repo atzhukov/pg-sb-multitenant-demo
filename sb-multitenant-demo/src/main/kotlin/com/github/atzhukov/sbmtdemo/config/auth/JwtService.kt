@@ -21,11 +21,24 @@ class JwtService(
 
 	fun createToken(user: UserWithDetails): String = Jwts.builder()
 		.subject(user.username)
-		.claim("sub_id", user.id)
-		.claim("ten_id", user.tenantIds)
+		.claim("sub-id", user.id)
+		.claim("ten-id", user.tenantIds)
 		.issuedAt(Date())
 		.expiration(Date(System.currentTimeMillis() + EXPIRATION_MS))
 		.signWith(secretKey)
 		.compact()
+
+	fun parseToken(token: String): JwtAuthentication {
+		val claims = Jwts.parser()
+			.verifyWith(secretKey)
+			.build()
+			.parseSignedClaims(token)
+
+		return JwtAuthentication(
+			userId = (claims.payload["sub-id"] as Number).toLong(),
+			username = claims.payload.subject,
+			tenantIds = claims.payload["ten-id"] as List<Long>,
+		).also { it.isAuthenticated = true }
+	}
 
 }
