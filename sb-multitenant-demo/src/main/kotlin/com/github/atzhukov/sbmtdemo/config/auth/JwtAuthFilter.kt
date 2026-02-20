@@ -29,7 +29,7 @@ class JwtAuthFilter(
 				val jwtAuth = jwtService.parseToken(token, request)
 				if (SecurityContextHolder.getContext().authentication == null) {
 					SecurityContextHolder.getContext().authentication = jwtAuth
-					log.info("Successfully authenticated {}", jwtAuth)
+					log.debug("Successfully authenticated {} (tenants = {})", jwtAuth, jwtAuth.tenantIds)
 				}
 			} catch (ex: Exception) {
 				logger.error("Error while authenticating with a JWT token", ex)
