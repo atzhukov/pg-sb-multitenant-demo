@@ -2,14 +2,16 @@ package com.github.atzhukov.sbmtdemo.config.auth
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import java.util.Date
 import javax.crypto.SecretKey
 
 @Component
 class JwtService(
-	@Value($$"${server.jwt.secret-key}")
+	@Value($$"${server.jwt.secret}")
 	private val secret: String
 ) {
 
@@ -28,17 +30,23 @@ class JwtService(
 		.signWith(secretKey)
 		.compact()
 
-	fun parseToken(token: String): JwtAuthentication {
+	fun parseToken(token: String, request: HttpServletRequest? = null): JwtAuthentication {
 		val claims = Jwts.parser()
 			.verifyWith(secretKey)
 			.build()
 			.parseSignedClaims(token)
 
-		return JwtAuthentication(
+		val auth = JwtAuthentication(
 			userId = (claims.payload["sub-id"] as Number).toLong(),
 			username = claims.payload.subject,
 			tenantIds = claims.payload["ten-id"] as List<Long>,
 		).also { it.isAuthenticated = true }
+
+		if (request != null) {
+			auth.details = WebAuthenticationDetailsSource().buildDetails(request)
+		}
+
+		return auth
 	}
 
 }

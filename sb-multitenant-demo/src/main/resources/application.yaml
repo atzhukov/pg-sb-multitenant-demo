@@ -5,7 +5,7 @@ spring:
 server:
   port: ${SB_PORT:8080}
   jwt:
-    secret-key: ${JWT_SECRET_KEY}
+    secret: ${JWT_SECRET}
 
 datasource:
   app:
