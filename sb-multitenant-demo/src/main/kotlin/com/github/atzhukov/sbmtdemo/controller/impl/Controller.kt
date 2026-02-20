@@ -1,6 +1,6 @@
 package com.github.atzhukov.sbmtdemo.controller.impl
 
-import com.github.atzhukov.sbmtdemo.config.auth.JwtUtils
+import com.github.atzhukov.sbmtdemo.config.auth.JwtService
 import com.github.atzhukov.sbmtdemo.config.auth.UserWithDetails
 import com.github.atzhukov.sbmtdemo.controller.Api
 import com.github.atzhukov.sbmtdemo.data.entity.Document
@@ -18,7 +18,7 @@ class Controller(
 	private val documentService: DocumentService,
 	private val authService: AuthService,
 	private val authenticationManager: AuthenticationManager,
-	private val jwtUtils: JwtUtils
+	private val jwtService: JwtService
 ): Api {
 
 	override fun getDocuments(): List<Document>
@@ -43,7 +43,7 @@ class Controller(
 
 		val auth = authenticationManager.authenticate(credentialsToken)
 		val principal = auth.principal as UserWithDetails
-		return jwtUtils.createToken(principal)
+		return jwtService.createToken(principal)
 	}
 
 }

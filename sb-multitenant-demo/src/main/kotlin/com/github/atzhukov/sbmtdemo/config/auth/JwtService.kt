@@ -8,7 +8,7 @@ import java.util.Date
 import javax.crypto.SecretKey
 
 @Component
-class JwtUtils(
+class JwtService(
 	@Value($$"${server.jwt.secret-key}")
 	private val secret: String
 ) {
@@ -17,9 +17,7 @@ class JwtUtils(
 		const val EXPIRATION_MS = 60 * 60 * 1000
 	}
 
-	private val secretKey: SecretKey = Keys.hmacShaKeyFor(
-		secret.toByteArray()
-	)
+	private val secretKey: SecretKey = Keys.hmacShaKeyFor(secret.toByteArray())
 
 	fun createToken(user: UserWithDetails): String = Jwts.builder()
 		.subject(user.username)

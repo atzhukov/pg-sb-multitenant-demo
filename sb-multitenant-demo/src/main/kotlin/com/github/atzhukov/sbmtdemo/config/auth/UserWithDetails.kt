@@ -14,5 +14,3 @@ class UserWithDetails(
 	override fun getPassword(): String? = user.password
 	override fun getAuthorities(): Collection<GrantedAuthority> = emptySet()
 }
-
-internal fun User.asUserDetails(): UserDetails = UserWithDetails(this)

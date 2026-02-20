@@ -11,7 +11,7 @@ class UserWithDetailsService(
 	private val authService: AuthService,
 ): UserDetailsService {
 	override fun loadUserByUsername(username: String): UserDetails {
-		return authService.getByLogin(username)?.asUserDetails()
-			?: throw UsernameNotFoundException("Wrong username")
+		val user = authService.getByLogin(username) ?: throw UsernameNotFoundException("Wrong username")
+		return UserWithDetails(user)
 	}
 }
