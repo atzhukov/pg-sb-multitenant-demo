@@ -6,6 +6,7 @@ import com.github.atzhukov.sbmtdemo.data.entity.Tenant
 import com.github.atzhukov.sbmtdemo.data.entity.User
 import com.github.atzhukov.sbmtdemo.service.AuthService
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Lazy
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.queryForObject
@@ -23,7 +24,8 @@ class AuthServiceImpl(
 	private val jdbcTemplate: JdbcTemplate,
 	@Qualifier("authTransactionTemplate")
 	private val transactionTemplate: TransactionTemplate,
-
+	@Lazy
+	private val authenticationManager: AuthenticationManager,
 	private val passwordEncoder: PasswordEncoder,
 	private val jwtService: JwtService
 ): AuthService {
@@ -70,11 +72,12 @@ class AuthServiceImpl(
 	}
 
 	override fun signIn(login: String, password: String): String {
-		val user = getByLogin(login) ?: throw NoSuchElementException("No user with this login exists")
-		if (!passwordEncoder.matches(password, user.password)) {
-			throw IllegalArgumentException("Wrong username or password")
-		}
-		return jwtService.createToken(UserWithDetails(user))
+		val credentialsToken = UsernamePasswordAuthenticationToken(
+			login, password
+		)
+		val auth = authenticationManager.authenticate(credentialsToken)
+		val principal = auth.principal as UserWithDetails
+		return jwtService.createToken(principal)
 	}
 
 	private fun extractUserWithTenants(rs: ResultSet): User? {

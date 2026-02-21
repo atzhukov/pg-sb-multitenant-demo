@@ -39,6 +39,16 @@ class SecurityConfiguration {
 	}
 
 	@Bean
+	fun authenticationManager(
+		userDetailsService: UserDetailsService,
+		passwordEncoder: PasswordEncoder
+	): AuthenticationManager {
+		val authenticationProvider = DaoAuthenticationProvider(userDetailsService)
+		authenticationProvider.setPasswordEncoder(passwordEncoder)
+		return ProviderManager(authenticationProvider)
+	}
+
+	@Bean
 	fun passwordEncoder(): PasswordEncoder {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder()
 	}
