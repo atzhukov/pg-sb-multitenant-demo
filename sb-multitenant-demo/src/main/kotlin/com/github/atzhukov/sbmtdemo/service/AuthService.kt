@@ -6,4 +6,5 @@ interface AuthService {
 	fun existsByLogin(login: String): Boolean
 	fun getByLogin(login: String): User?
 	fun createUser(user: User): Long
+	fun signIn(login: String, password: String): String
 }

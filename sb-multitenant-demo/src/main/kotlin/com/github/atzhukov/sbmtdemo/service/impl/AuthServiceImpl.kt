@@ -1,5 +1,7 @@
 package com.github.atzhukov.sbmtdemo.service.impl
 
+import com.github.atzhukov.sbmtdemo.config.auth.JwtService
+import com.github.atzhukov.sbmtdemo.config.auth.UserWithDetails
 import com.github.atzhukov.sbmtdemo.data.entity.Tenant
 import com.github.atzhukov.sbmtdemo.data.entity.User
 import com.github.atzhukov.sbmtdemo.service.AuthService
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.queryForObject
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
@@ -19,7 +23,10 @@ class AuthServiceImpl(
 	private val jdbcTemplate: JdbcTemplate,
 	@Qualifier("authTransactionTemplate")
 	private val transactionTemplate: TransactionTemplate,
+
+	private val authenticationManager: AuthenticationManager,
 	private val passwordEncoder: PasswordEncoder,
+	private val jwtService: JwtService
 ): AuthService {
 
 	companion object {
@@ -61,6 +68,15 @@ class AuthServiceImpl(
 			}
 			return@tx userId
 		}
+	}
+
+	override fun signIn(login: String, password: String): String {
+		val credentialsToken = UsernamePasswordAuthenticationToken(
+			login, password
+		)
+		val auth = authenticationManager.authenticate(credentialsToken)
+		val principal = auth.principal as UserWithDetails
+		return jwtService.createToken(principal)
 	}
 
 	private fun extractUserWithTenants(rs: ResultSet): User? {

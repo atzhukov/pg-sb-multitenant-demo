@@ -17,38 +17,23 @@ import org.springframework.web.server.ResponseStatusException
 @RestController
 class Controller(
 	private val documentService: DocumentService,
-	private val authService: AuthService,
-	private val authenticationManager: AuthenticationManager,
-	private val jwtService: JwtService
+	private val authService: AuthService
 ): Api {
 
 	override fun getDocuments(): List<Document>
 			= documentService.getAllDocuments()
 
 	override fun signUp(request: Api.SignUpRequest) {
-		val credentials = request.credentials
-		if (authService.existsByLogin(credentials.login)) {
-			throw ResponseStatusException(HttpStatus.CONFLICT, "Username already exists")
-		}
-
 		val user = User(
-			login = credentials.login,
-			password = credentials.password, // will be hashed by authService
+			login = request.credentials.login,
+			password = request.credentials.password, // will be hashed by authService
 			name = request.name,
 			tenants = request.tenants.map { Tenant(id = it) }.toSet()
 		)
 		authService.createUser(user)
 	}
 
-	override fun signIn(credentials: Api.Credentials): String {
-		val credentialsToken = UsernamePasswordAuthenticationToken(
-			credentials.login,
-			credentials.password
-		)
-
-		val auth = authenticationManager.authenticate(credentialsToken)
-		val principal = auth.principal as UserWithDetails
-		return jwtService.createToken(principal)
-	}
+	override fun signIn(credentials: Api.Credentials): String
+			= authService.signIn(credentials.login, credentials.password)
 
 }
