@@ -12,16 +12,33 @@ import org.springframework.web.bind.annotation.ResponseStatus
 interface Api {
 
 	@GetMapping("/documents")
-	fun getDocuments(): List<Document>
+	fun getDocuments(): List<Response.Document>
 
 	@PostMapping("/signup")
 	@ResponseStatus(HttpStatus.CREATED)
-	fun signUp(@RequestBody request: SignUpRequest)
+	fun signUp(@RequestBody request: Request.SignUp)
 
 	@PostMapping("/signin")
-	fun signIn(@RequestBody credentials: Credentials): String
+	fun signIn(@RequestBody credentials: Request.Credentials): String
 
-	data class Credentials(val login: String, val password: String)
-	data class SignUpRequest(val credentials: Credentials, val name: String, val tenants: List<Long>)
+	abstract class Request {
+		data class Credentials(val login: String, val password: String)
+		data class SignUp(val credentials: Credentials, val name: String, val tenants: List<Long>)
+	}
+
+	@Suppress("RemoveRedundantQualifierName")
+	abstract class Response {
+		data class Document(
+			val id: Long,
+			val name: String,
+			val contents: String,
+			val notes: List<Response.Note>,
+			val tags: List<Response.Tag>,
+			val tenant: Response.Tenant?
+		)
+		data class Note(val id: Long, val contents: String)
+		data class Tag(val id: Long, val name: String)
+		data class Tenant(val id: Long, val name: String)
+	}
 
 }
