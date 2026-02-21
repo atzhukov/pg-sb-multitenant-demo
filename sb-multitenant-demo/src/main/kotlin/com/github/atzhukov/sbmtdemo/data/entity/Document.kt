@@ -22,17 +22,17 @@ class Document(
 	var id: Long? = null,
 
 	@Column(nullable = false)
-	var name: String? = null,
+	var name: String,
 
 	@Column(nullable = false)
-	var contents: String? = null,
+	var contents: String,
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "tenant")
 	var tenant: Tenant? = null,
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "document")
-	var notes: List<Note>? = null,
+	var notes: List<Note> = emptyList(),
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -40,6 +40,6 @@ class Document(
 		joinColumns = [JoinColumn(name = "document")],
 		inverseJoinColumns = [JoinColumn(name = "tag")]
 	)
-	var tags: List<Tag>? = null
+	var tags: List<Tag> = emptyList()
 
 )

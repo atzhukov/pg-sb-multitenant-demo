@@ -53,16 +53,16 @@ class AuthServiceImpl(
 	}
 
 	override fun createUser(user: User): Long {
-		if (existsByLogin(user.login!!)) {
+		if (existsByLogin(user.login)) {
 			throw IllegalArgumentException("User with this login already exists")
 		}
 
 		val password = passwordEncoder.encode(user.password)
 		return transactionTemplate.execute tx@ {
-			val userId = jdbcTemplate.queryForObject<Long>(SQL_NEW_USER, user.login!!, password, user.name!!)
+			val userId = jdbcTemplate.queryForObject<Long>(SQL_NEW_USER, user.login, password, user.name)
 				?: throw IllegalStateException("No user ID was returned")
-			if (!user.tenants.isNullOrEmpty()) {
-				val parameters = user.tenants!!.map { arrayOf(userId, it.id!!) }
+			if (user.tenants.isNotEmpty()) {
+				val parameters = user.tenants.map { arrayOf(userId, it.id!!) }
 				jdbcTemplate.batchUpdate(SQL_NEW_USER_TENANTS, parameters)
 			}
 			return@tx userId

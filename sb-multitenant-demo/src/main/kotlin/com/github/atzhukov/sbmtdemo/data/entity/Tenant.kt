@@ -16,6 +16,6 @@ class Tenant(
 	var id: Long? = null,
 
 	@Column(nullable = false)
-	var name: String? = null
+	var name: String
 
 )

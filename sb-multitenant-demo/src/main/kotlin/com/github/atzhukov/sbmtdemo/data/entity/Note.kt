@@ -20,11 +20,11 @@ class Note(
 	var id: Long? = null,
 
 	@Column(nullable = false)
-	var contents: String? = null,
+	var contents: String,
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "document")
-	var document: Document? = null
+	var document: Document
 
 )

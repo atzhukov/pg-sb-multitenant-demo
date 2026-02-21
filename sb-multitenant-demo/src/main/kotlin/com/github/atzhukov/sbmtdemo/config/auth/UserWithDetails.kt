@@ -8,9 +8,9 @@ class UserWithDetails(
 	val user: User
 ): UserDetails {
 	val id = user.id!!
-	val tenantIds = user.tenants?.map { it.id!! } ?: emptyList()
+	val tenantIds = user.tenants.map { it.id!! }
 
-	override fun getUsername(): String = user.login!!
-	override fun getPassword(): String? = user.password
+	override fun getUsername(): String = user.login
+	override fun getPassword(): String = user.password
 	override fun getAuthorities(): Collection<GrantedAuthority> = emptySet()
 }

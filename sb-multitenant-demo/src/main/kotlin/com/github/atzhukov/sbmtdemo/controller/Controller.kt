@@ -20,7 +20,7 @@ class Controller(
 			login = request.credentials.login,
 			password = request.credentials.password, // will be hashed by authService
 			name = request.name,
-			tenants = request.tenants.map { Tenant(id = it) }.toSet()
+			tenants = request.tenants.map { Tenant(id = it, name = "") }.toSet()
 		)
 		authService.createUser(user)
 	}

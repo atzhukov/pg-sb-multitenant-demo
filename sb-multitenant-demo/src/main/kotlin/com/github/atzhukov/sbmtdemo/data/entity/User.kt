@@ -21,13 +21,13 @@ class User(
 	var id: Long? = null,
 
 	@Column(nullable = false)
-	var login: String? = null,
+	var login: String,
 
 	@Column(nullable = false)
-	var password: String? = null,
+	var password: String,
 
 	@Column(nullable = false)
-	var name: String? = null,
+	var name: String,
 
 	var lastLogin: OffsetDateTime? = null,
 
@@ -37,6 +37,6 @@ class User(
 		joinColumns = [JoinColumn(name = "user")],
 		inverseJoinColumns = [JoinColumn(name = "tenant")]
 	)
-	var tenants: Set<Tenant>? = null
+	var tenants: Set<Tenant> = emptySet()
 
 )

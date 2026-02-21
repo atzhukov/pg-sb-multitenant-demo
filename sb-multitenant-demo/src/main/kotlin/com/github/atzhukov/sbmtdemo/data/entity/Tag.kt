@@ -20,7 +20,7 @@ class Tag(
 	var id: Long? = null,
 
 	@Column(nullable = false)
-	var name: String? = null,
+	var name: String,
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
