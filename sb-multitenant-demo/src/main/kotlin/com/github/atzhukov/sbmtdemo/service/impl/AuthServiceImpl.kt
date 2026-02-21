@@ -24,7 +24,6 @@ class AuthServiceImpl(
 	@Qualifier("authTransactionTemplate")
 	private val transactionTemplate: TransactionTemplate,
 
-	private val authenticationManager: AuthenticationManager,
 	private val passwordEncoder: PasswordEncoder,
 	private val jwtService: JwtService
 ): AuthService {
@@ -71,12 +70,11 @@ class AuthServiceImpl(
 	}
 
 	override fun signIn(login: String, password: String): String {
-		val credentialsToken = UsernamePasswordAuthenticationToken(
-			login, password
-		)
-		val auth = authenticationManager.authenticate(credentialsToken)
-		val principal = auth.principal as UserWithDetails
-		return jwtService.createToken(principal)
+		val user = getByLogin(login) ?: throw NoSuchElementException("No user with this login exists")
+		if (!passwordEncoder.matches(password, user.password)) {
+			throw IllegalArgumentException("Wrong username or password")
+		}
+		return jwtService.createToken(UserWithDetails(user))
 	}
 
 	private fun extractUserWithTenants(rs: ResultSet): User? {
