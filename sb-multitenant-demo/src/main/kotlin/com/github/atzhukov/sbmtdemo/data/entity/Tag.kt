@@ -17,14 +17,14 @@ class Tag(
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	var id: Long?,
+	var id: Long? = null,
 
 	@Column(nullable = false)
-	var name: String?,
+	var name: String? = null,
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "tenant")
-	var tenant: Tenant?
+	var tenant: Tenant? = null
 
 )

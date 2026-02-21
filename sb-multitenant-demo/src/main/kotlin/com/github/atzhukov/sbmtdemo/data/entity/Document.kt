@@ -19,20 +19,20 @@ class Document(
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	var id: Long?,
+	var id: Long? = null,
 
 	@Column(nullable = false)
-	var name: String?,
+	var name: String? = null,
 
 	@Column(nullable = false)
-	var contents: String?,
+	var contents: String? = null,
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "tenant")
-	var tenant: Tenant?,
+	var tenant: Tenant? = null,
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "document")
-	var notes: List<Note>?,
+	var notes: List<Note>? = null,
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -40,6 +40,6 @@ class Document(
 		joinColumns = [JoinColumn(name = "document")],
 		inverseJoinColumns = [JoinColumn(name = "tag")]
 	)
-	var tags: List<Tag>?
+	var tags: List<Tag>? = null
 
 )

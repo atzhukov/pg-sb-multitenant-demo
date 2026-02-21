@@ -17,14 +17,14 @@ class Note(
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	var id: Long?,
+	var id: Long? = null,
 
 	@Column(nullable = false)
-	var contents: String?,
+	var contents: String? = null,
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "document")
-	var document: Document?
+	var document: Document? = null
 
 )
