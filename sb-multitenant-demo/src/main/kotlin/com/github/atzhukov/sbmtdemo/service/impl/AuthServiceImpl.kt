@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.queryForObject
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionTemplate
 import java.sql.ResultSet
 import java.time.OffsetDateTime
 
@@ -17,16 +17,14 @@ import java.time.OffsetDateTime
 class AuthServiceImpl(
 	@Qualifier("authJdbcTemplate")
 	private val jdbcTemplate: JdbcTemplate,
+	@Qualifier("authTransactionTemplate")
+	private val transactionTemplate: TransactionTemplate,
 	private val passwordEncoder: PasswordEncoder,
 ): AuthService {
 
-	override fun existsByLogin(login: String): Boolean {
-		val sql = "SELECT EXISTS (SELECT 1 FROM users WHERE login = ?)"
-		return jdbcTemplate.queryForObject(sql, login) ?: false
-	}
-
-	override fun getByLogin(login: String): User? {
-		val sql = """
+	companion object {
+		const val SQL_USER_EXISTS = "SELECT EXISTS (SELECT 1 FROM users WHERE login = ?)"
+		const val SQL_USER = """
 			SELECT
 				u.*,
 				t.id AS tenant_id,
@@ -35,17 +33,34 @@ class AuthServiceImpl(
 				LEFT JOIN users_to_tenants utt ON utt.user = u.id
 				LEFT JOIN tenants t ON t.id = utt.tenant
 			WHERE u.login = ?
-			""".trimIndent()
-		return jdbcTemplate.query(sql, ResultSetExtractor(::extractUserWithTenants), login)
+			"""
+		const val SQL_NEW_USER = "INSERT INTO users (login, password, name) VALUES (?, ?, ?) RETURNING id"
+		const val SQL_NEW_USER_TENANTS = "INSERT INTO users_to_tenants (\"user\", tenant) VALUES (?, ?)"
 	}
 
-	@Transactional
-	override fun create(user: User, password: String) {
+	override fun existsByLogin(login: String): Boolean {
+		return jdbcTemplate.queryForObject(SQL_USER_EXISTS, login) ?: false
+	}
+
+	override fun getByLogin(login: String): User? {
+		return jdbcTemplate.query(SQL_USER, ResultSetExtractor(::extractUserWithTenants), login)
+	}
+
+	override fun createUser(user: User): Long {
 		if (existsByLogin(user.login!!)) {
 			throw IllegalArgumentException("User with this login already exists")
 		}
-		val sql = "INSERT INTO users (login, password, name) VALUES (?, ?, ?)"
-		jdbcTemplate.update(sql, user.login!!, passwordEncoder.encode(password), user.login!! + "@@@")
+
+		val password = passwordEncoder.encode(user.password)
+		return transactionTemplate.execute tx@ {
+			val userId = jdbcTemplate.queryForObject<Long>(SQL_NEW_USER, user.login!!, password, user.name!!)
+				?: throw IllegalStateException("No user ID was returned")
+			if (!user.tenants.isNullOrEmpty()) {
+				val parameters = user.tenants!!.map { arrayOf(userId, it.id!!) }
+				jdbcTemplate.batchUpdate(SQL_NEW_USER_TENANTS, parameters)
+			}
+			return@tx userId
+		}
 	}
 
 	private fun extractUserWithTenants(rs: ResultSet): User? {

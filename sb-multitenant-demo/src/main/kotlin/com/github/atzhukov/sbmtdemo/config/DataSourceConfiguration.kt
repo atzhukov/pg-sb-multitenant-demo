@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.core.env.Environment
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import javax.sql.DataSource
 
 @Configuration
@@ -34,8 +37,18 @@ class DataSourceConfiguration(
 
 	@Bean
 	@Primary
-	fun jdbcTemplate(@Qualifier("dataSource") dataSource: DataSource): JdbcTemplate
+	fun jdbcTemplate(dataSource: DataSource): JdbcTemplate
 			= JdbcTemplate(dataSource)
+
+	@Bean
+	@Primary
+	fun transactionManager(dataSource: DataSource): PlatformTransactionManager
+			= DataSourceTransactionManager(dataSource)
+
+	@Bean
+	@Primary
+	fun transactionTemplate(transactionManager: PlatformTransactionManager): TransactionTemplate
+			= TransactionTemplate(transactionManager)
 
 	// The secondary auth data source connects as the database user with role 'auth',
 	// only allowed to read users and tenants but bypassing RLS to facilitate authentication.
@@ -49,6 +62,22 @@ class DataSourceConfiguration(
 	@Qualifier("authJdbcTemplate")
 	fun authJdbcTemplate(@Qualifier("authDataSource") authDataSource: DataSource): JdbcTemplate
 			= JdbcTemplate(authDataSource)
+
+	@Bean
+	@Qualifier("authPlatformTransactionManager")
+	fun authTransactionManager(
+		@Qualifier("authDataSource") authDataSource: DataSource
+	): PlatformTransactionManager
+			= DataSourceTransactionManager(authDataSource)
+
+	@Bean
+	@Qualifier("authTransactionTemplate")
+	fun authTransactionTemplate(
+		@Qualifier("authPlatformTransactionManager")authTransactionManager: PlatformTransactionManager
+	): TransactionTemplate
+			= TransactionTemplate(authTransactionManager)
+
+	// Helpers:
 
 	private fun initDataSource(prefix: String): DataSource {
 		val dataSource = DataSourceBuilder.create().build()

@@ -16,11 +16,12 @@ interface Api {
 
 	@PostMapping("/signup")
 	@ResponseStatus(HttpStatus.CREATED)
-	fun signUp(@RequestBody credentials: Credentials)
+	fun signUp(@RequestBody request: SignUpRequest)
 
 	@PostMapping("/signin")
 	fun signIn(@RequestBody credentials: Credentials): String
 
 	data class Credentials(val login: String, val password: String)
+	data class SignUpRequest(val credentials: Credentials, val name: String, val tenants: List<Long>)
 
 }

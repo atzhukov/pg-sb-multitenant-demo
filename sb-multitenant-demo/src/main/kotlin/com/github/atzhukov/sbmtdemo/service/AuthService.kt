@@ -5,5 +5,5 @@ import com.github.atzhukov.sbmtdemo.data.entity.User
 interface AuthService {
 	fun existsByLogin(login: String): Boolean
 	fun getByLogin(login: String): User?
-	fun create(user: User, password: String)
+	fun createUser(user: User): Long
 }

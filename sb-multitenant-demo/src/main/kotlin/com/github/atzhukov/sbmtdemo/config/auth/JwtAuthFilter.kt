@@ -32,7 +32,7 @@ class JwtAuthFilter(
 					log.debug("Successfully authenticated {} (tenants = {})", jwtAuth, jwtAuth.tenantIds)
 				}
 			} catch (ex: Exception) {
-				logger.error("Error while authenticating with a JWT token", ex)
+				log.error("Error while authenticating with a JWT token", ex)
 			}
 		}
 

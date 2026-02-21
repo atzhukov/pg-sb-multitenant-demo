@@ -4,6 +4,7 @@ import com.github.atzhukov.sbmtdemo.config.auth.JwtService
 import com.github.atzhukov.sbmtdemo.config.auth.UserWithDetails
 import com.github.atzhukov.sbmtdemo.controller.Api
 import com.github.atzhukov.sbmtdemo.data.entity.Document
+import com.github.atzhukov.sbmtdemo.data.entity.Tenant
 import com.github.atzhukov.sbmtdemo.data.entity.User
 import com.github.atzhukov.sbmtdemo.service.AuthService
 import com.github.atzhukov.sbmtdemo.service.DocumentService
@@ -24,15 +25,19 @@ class Controller(
 	override fun getDocuments(): List<Document>
 			= documentService.getAllDocuments()
 
-	override fun signUp(credentials: Api.Credentials) {
+	override fun signUp(request: Api.SignUpRequest) {
+		val credentials = request.credentials
 		if (authService.existsByLogin(credentials.login)) {
 			throw ResponseStatusException(HttpStatus.CONFLICT, "Username already exists")
 		}
+
 		val user = User(
 			login = credentials.login,
-			name = credentials.login + " (Name)"
+			password = credentials.password, // will be hashed by authService
+			name = request.name,
+			tenants = request.tenants.map { Tenant(id = it) }.toSet()
 		)
-		authService.create(user, credentials.password)
+		authService.createUser(user)
 	}
 
 	override fun signIn(credentials: Api.Credentials): String {

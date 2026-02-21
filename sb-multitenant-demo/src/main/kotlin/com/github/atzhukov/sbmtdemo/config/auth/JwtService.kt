@@ -45,7 +45,6 @@ class JwtService(
 		if (request != null) {
 			auth.details = WebAuthenticationDetailsSource().buildDetails(request)
 		}
-
 		return auth
 	}
 
