@@ -10,5 +10,5 @@ class DocumentServiceImpl(
 	private val documentRepository: DocumentRepository
 ) : DocumentService {
 	override fun getAllDocuments(): List<Document>
-			= documentRepository.findAll()
+		= documentRepository.findAll()
 }

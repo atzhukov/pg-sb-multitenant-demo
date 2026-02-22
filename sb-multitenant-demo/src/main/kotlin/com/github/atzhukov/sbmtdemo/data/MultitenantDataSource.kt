@@ -18,10 +18,10 @@ class MultitenantDataSource(
 	}
 
 	override fun getConnection(): Connection
-			= connectionWithTenant(dataSource.connection)
+		= connectionWithTenant(dataSource.connection)
 
 	override fun getConnection(username: String, password: String): Connection
-			= connectionWithTenant(dataSource.getConnection(username, password))
+		= connectionWithTenant(dataSource.getConnection(username, password))
 
 	private fun connectionWithTenant(connection: Connection): Connection {
 		connection.prepareStatement("SELECT set_config(?, ?, FALSE)").also {

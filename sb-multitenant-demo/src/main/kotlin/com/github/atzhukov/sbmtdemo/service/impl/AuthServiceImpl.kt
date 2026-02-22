@@ -46,13 +46,11 @@ class AuthServiceImpl(
 		const val SQL_NEW_USER_TENANTS = "INSERT INTO users_to_tenants (\"user\", tenant) VALUES (?, ?)"
 	}
 
-	override fun existsByLogin(login: String): Boolean {
-		return jdbcTemplate.queryForObject(SQL_USER_EXISTS, login) ?: false
-	}
+	override fun existsByLogin(login: String): Boolean
+		= jdbcTemplate.queryForObject(SQL_USER_EXISTS, login) ?: false
 
-	override fun getByLogin(login: String): User? {
-		return jdbcTemplate.query(SQL_USER, ResultSetExtractor(::extractUserWithTenants), login)
-	}
+	override fun getByLogin(login: String): User?
+		= jdbcTemplate.query(SQL_USER, ResultSetExtractor(::extractUserWithTenants), login)
 
 	override fun createUser(user: User): Long {
 		if (existsByLogin(user.login)) {

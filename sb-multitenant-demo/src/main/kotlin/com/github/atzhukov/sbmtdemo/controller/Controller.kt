@@ -13,19 +13,21 @@ class Controller(
 ): Api {
 
 	override fun getDocuments(): List<Api.Response.Document>
-			= documentService.getAllDocuments().map { it.toDto() }
+		= documentService.getAllDocuments().map { it.toDto() }
 
 	override fun signUp(request: Api.Request.SignUp) {
 		val user = User(
 			login = request.credentials.login,
 			password = request.credentials.password, // will be hashed by authService
 			name = request.name,
-			tenants = request.tenants.map { Tenant(id = it, name = "") }.toSet()
+			tenants = request.tenants.map {
+				Tenant(id = it, name = "")
+			}.toSet()
 		)
 		authService.createUser(user)
 	}
 
 	override fun signIn(credentials: Api.Request.Credentials): String
-			= authService.signIn(credentials.login, credentials.password)
+		= authService.signIn(credentials.login, credentials.password)
 
 }
