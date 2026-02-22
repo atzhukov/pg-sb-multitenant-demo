@@ -1,0 +1,26 @@
+### User credentials
+@login = email@example.com
+@password = 123456
+
+### Create a user
+POST http://localhost:8081/api/signup
+Content-Type: application/json
+
+{
+  "credentials": {
+    "login": "{{login}}",
+    "password": "{{password}}"
+  },
+  "name": "Alice Baker",
+  "tenants": [1]
+}
+
+### Log in
+POST http://localhost:8081/api/signup
+Content-Type: application/json
+Accept: text/plain
+
+{
+  "login": "{{login}}",
+  "password": "{{password}}"
+}

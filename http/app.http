@@ -1,0 +1,6 @@
+### Token obtained after a successful login
+@token = a.b.c
+
+### Retrieve documents of allowed tenants
+GET http://localhost:8081/api/documents
+Authorization: Bearer {{token}}
